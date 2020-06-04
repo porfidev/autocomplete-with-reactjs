@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import getAll from "./api/stateIsoAPI";
-import logo from "./logo.svg";
-import "./App.css";
+import "./styles/styles.scss";
 import stateIsoAPI from "./api/stateIsoAPI";
 import OptionList from "./components/OptionList";
+import loadingIcon from "./103.gif";
 
 function App() {
   const [states, setStates] = useState([]);
@@ -44,10 +43,16 @@ function App() {
   const changeSelection = event => {
     switch (event.keyCode) {
       case 40:
-        setSelected(selected + 1);
+        event.preventDefault();
+        if (showOptionList) {
+          setSelected(selected + 1);
+        }
         break;
       case 38:
-        setSelected(selected - 1);
+        event.preventDefault();
+        if (showOptionList) {
+          setSelected(selected - 1);
+        }
         break;
       case 13:
         event.preventDefault();
@@ -61,37 +66,46 @@ function App() {
 
   return (
     <div className="App">
-      <pre>{JSON.stringify(showOptionList)}</pre>
-      {/*<pre>{JSON.stringify(stateName, null, 2)}</pre>*/}
-      {/*<pre>{JSON.stringify(filteredStates, null, 2)}</pre>*/}
-      {/*<pre>{doSearch ? "busca" : "no busques"}</pre>*/}
-      {/*<pre>{JSON.stringify(states, null, 2)}</pre>*/}
       <input
+        className="searchInput"
         type="text"
         value={stateName}
         onChange={e => {
           setStateName(e.target.value);
           setDoSearch(true);
-          setShowOptionList((e.target.value.length > 0));
+          setShowOptionList(e.target.value.length > 0);
         }}
+        onBlurCapture={() => setShowOptionList(false)}
         onKeyDownCapture={changeSelection}
       />
-      <div>
-        {isSearching && <span>Buscando</span>}
-        {filteredStates.length > 0 && stateName.length > 0 && showOptionList && (
-          <OptionList
-            options={filteredStates}
-            searchString={stateName}
-            onSelect={name => {
-              console.log("ON SELECT");
-              setStateName(name);
-              setSelected(-1);
-              setShowOptionList(false);
-            }}
-            selected={selected}
-          />
-        )}
-      </div>
+      {showOptionList && (
+        <div className="optionListContainer">
+          {isSearching && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <img src={loadingIcon} />
+            </div>
+          )}
+          {filteredStates.length > 0 && stateName.length > 0 && showOptionList && (
+            <OptionList
+              options={filteredStates}
+              searchString={stateName}
+              onSelect={name => {
+                console.log("ON SELECT");
+                setStateName(name);
+                setSelected(-1);
+                setShowOptionList(false);
+              }}
+              selected={selected}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

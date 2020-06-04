@@ -23,11 +23,10 @@ function OptionList({ options, searchString, onSelect, selected }) {
   return options.map((state, index) => {
     return (
       <div
+        className={`option ${isSelected(selected, index) ? 'active' : ''}`
+        }
         key={state.code}
         onClick={() => onSelect(state.name)}
-        style={{
-          backgroundColor: isSelected(selected, index) ? "red" : "transparent"
-        }}
       >
         {optionWithHighlightSearch(state.name, searchString)}
       </div>
