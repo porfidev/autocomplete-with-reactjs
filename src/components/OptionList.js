@@ -26,7 +26,13 @@ function OptionList({ options, searchString, onSelect, selected }) {
         className={`option ${isSelected(selected, index) ? 'active' : ''}`
         }
         key={state.code}
-        onClick={() => onSelect(state.name)}
+        onMouseOverCapture={() => {
+          console.log('aqui arria');
+        }}
+        onClickCapture={() => {
+          console.log("triggered");
+          onSelect(state.name)
+        }}
       >
         {optionWithHighlightSearch(state.name, searchString)}
       </div>

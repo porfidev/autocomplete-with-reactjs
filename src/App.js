@@ -9,7 +9,7 @@ function App() {
   const [filteredStates, setFilteredStates] = useState([]);
   const [stateName, setStateName] = useState("");
   const [doSearch, setDoSearch] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(true);
   const [selected, setSelected] = useState(-1);
   const [showOptionList, setShowOptionList] = useState(false);
 
@@ -65,47 +65,70 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <input
-        className="searchInput"
-        type="text"
-        value={stateName}
-        onChange={e => {
-          setStateName(e.target.value);
-          setDoSearch(true);
-          setShowOptionList(e.target.value.length > 0);
-        }}
-        onBlurCapture={() => setShowOptionList(false)}
-        onKeyDownCapture={changeSelection}
-      />
-      {showOptionList && (
-        <div className="optionListContainer">
-          {isSearching && (
+    <div className="App" onClick={() => setShowOptionList(false)}>
+      <div className="content">
+        <input
+          className="searchInput"
+          type="text"
+          value={stateName}
+          onChange={e => {
+            setStateName(e.target.value);
+            setDoSearch(true);
+            setShowOptionList(e.target.value.length > 0);
+          }}
+          onKeyDownCapture={changeSelection}
+          placeholder="Ingresa una Entidad Federativa"
+        />
+        {isSearching && stateName.length > 0 && (
+          <div className="optionListContainer">
             <div
               style={{
+                height: '3em',
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
               }}
             >
-              <img src={loadingIcon} />
+              <img alt="loading-icon" src={loadingIcon} />
+            </div>
+          </div>
+        )}
+
+        {!isSearching &&
+          filteredStates.length > 0 &&
+          stateName.length > 0 &&
+          showOptionList && (
+            <div className="optionListContainer">
+              {isSearching && (
+                <div
+                  style={{
+                    height: "3em",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <img src={loadingIcon} />
+                </div>
+              )}
+              {filteredStates.length > 0 &&
+                stateName.length > 0 &&
+                showOptionList && (
+                  <OptionList
+                    options={filteredStates}
+                    searchString={stateName}
+                    onSelect={name => {
+                      console.log("ON SELECT");
+                      setStateName(name);
+                      setSelected(-1);
+                      setShowOptionList(false);
+                    }}
+                    selected={selected}
+                  />
+                )}
             </div>
           )}
-          {filteredStates.length > 0 && stateName.length > 0 && showOptionList && (
-            <OptionList
-              options={filteredStates}
-              searchString={stateName}
-              onSelect={name => {
-                console.log("ON SELECT");
-                setStateName(name);
-                setSelected(-1);
-                setShowOptionList(false);
-              }}
-              selected={selected}
-            />
-          )}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
